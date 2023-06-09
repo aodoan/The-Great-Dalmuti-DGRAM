@@ -8,7 +8,7 @@ CONFIG_FILE = "config.txt" #arquivo de configuracao
 UDP_PORT = 8080            #porta padrao de comunicacao
 MARCADOR_INICIO = "INICIO"
 MARCADOR_FIM = "FIM"
-
+PRIMEIRO_A_JOGAR = 1
 f = open(CONFIG_FILE, "r")
 conteudo = f.read()
 config = configparser.RawConfigParser()

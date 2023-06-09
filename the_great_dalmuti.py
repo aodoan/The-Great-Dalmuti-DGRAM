@@ -40,19 +40,35 @@ def main():
 
     #loop do jogo
     fim_de_jogo = 0
-    BASTAO = 1 #define o bastao inicialmente com o jogador 1
+    if(ordem == PRIMEIRO_A_JOGAR):
+        BASTAO = 1
+    else:
+        BASTAO = 0
+
+    jogada = [0] * 3 
     while (fim_de_jogo != 1):
         #imprime_dados()
         #verifica se a maquina atual tem o bastao
-        if(ordem == BASTAO):
-            print("faz a jogada...")
-            
+        if(BASTAO == 1):
+            jogada = get_jogada(jogada)
+            msg = cria_mensagem(jogada)
+            send(msg) # envia a jogada pra todo mundo    
+            msgR = recebe_mensagem()
+            msg = cria_mensagem_bastao(msgR) # envia o bastao para frente
+            send(msgR)
+            BASTAO = 0 # perde o bastao
         else:
             #espera algo, e quando receber manda pra frente, consumindo as paradas
             msg = recebe_mensagem()
-            atualiza_dados(msg, player_info) #atualiza os dados
-            msg[3][ordem-1] = 1 # confirma que recebeu
-            send(msg) #envia a mensagem para proximo da rede
+            if("bastao" in msg):
+                BASTAO = 1      # ele ta com o bastao, pode fazer a jogada
+                if(jogada[2] == ordem): # significa que todo mundo passou, ele ganha a rodada
+                    jogada = [0] * 3    # marca como zero a jogada
+            else:
+                # se ele n for receber o bastao
+                atualiza_dados(msg, player_info) #atualiza os dados
+                msg[3][ordem-1] = 1 # confirma que recebeu
+                send(msg) #envia a mensagem para proximo da rede
 
 
 
