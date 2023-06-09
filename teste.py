@@ -72,6 +72,10 @@ def recebe_baralho(mensagem):
 
 player_info = [20] * num
 
+a = cria_mensagem_cartas()
+hand_set = recebe_baralho(a)
+print(hand_set)
+
 def atualiza_dados(msg, player_info):
     #ve quem mandou
     origem = msg[1] - 1
@@ -80,17 +84,70 @@ def atualiza_dados(msg, player_info):
     player_info[origem] = player_info[origem] - msg[2][0]
     return player_info
 
-def get_jogada():
+#passa a ultima jogada que foi feita
+#funcao precaria, arrumar o quanto antes que vergonha
+def get_jogada(jogada):
+    imprime_cartas(hand_set)
+    if(jogada[0] != 0):
+        print(f"A ultima jogada foi: {jogada[0]} cartas de nivel {jogada[1]}")
+    else:
+        print("Faca a sua jogada: ")
+    while True:
+        if(jogada[0] == 0):
+            op = 'J'
+        else:
+            op = input("J - Jogar, P - Passar: ")
+        if(op == "j" or op == "J"):
+            while True:
+                try:
+                    q, n = input("Digite sua jogada [qtd/nivel] ").split(" ", 2)
+                    break
+                except:
+                    print("Digite os inputs corretamente.") 
+            
+            qtd = int(q)
+            nivel = int(n)
+            print(f"{qtd} cartas do nivel {nivel}")
+            
+            #verifica se a jogada eh valida
+            if(jogada[0] != qtd):
+                print("Voce precisa jogar o mesmo numero de cartas!")
+            elif(nivel >= jogada[1]):
+                print("Voce precisa jogar cartas com nivel menor!")
+
+            #chega aqui somente se a jogada for valida, agora verifica se ele tem as cartas
+            else:
+                #verifica se tem as cartas do nivel requerido
+                if(hand_set.count(nivel) >= qtd):
+                    for i in range(0, qtd):
+                        hand_set.remove(nivel)  # remove as cartas do baralho se tiver
+                    print("jogada feita!")
+                    jogada[0] = qtd             # atribui os valores para jogada e retorna
+                    jogada[1] = nivel           #
+                    player_info[ordem-1] -= qtd #diminui a quantidade de cartas
+                    #se tiver, printa e vaza
+                    return jogada
+                    break
+                else:
+                    print("voce nao tem a carta para jogar!")
+
+        elif(op == "P" or op == "p"):
+            print("Voce passou a vez!")
+            return jogada
+            break
     
 
+#jogada = [0] * 2
 jogada = []
-jogada.append(2)
-jogada.append(4)
-lista = cria_mensagem(jogada)
-print(player_info)
-atualiza_dados(lista, player_info)
-print(player_info)
+jogada.append(1)
+jogada.append(10)
+msg = cria_mensagem(jogada)
 
+print(player_info)
+print(jogada)
+jogada = get_jogada(jogada)
+print(jogada)
+print(player_info)
 '''
 lista = cria_mensagem_cartas()
 print(lista)
