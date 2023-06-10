@@ -4,6 +4,7 @@ import socket
 
 hostname = socket.gethostname()
 CARTEADOR = 1
+
 CONFIG_FILE = "config.txt" #arquivo de configuracao
 UDP_PORT = 8080            #porta padrao de comunicacao
 MARCADOR_INICIO = "INICIO"
