@@ -16,7 +16,7 @@ config.read(r'config.txt')
 
 
 
-def num_players(): 
+def num_players():
     num = int(config.get('NUM', 'player'))
     return num
 
@@ -71,4 +71,3 @@ def order(IP):
     return int(ordem)
 
 ordem = order(socket.gethostbyname(hostname))
-
