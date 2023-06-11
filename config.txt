@@ -4,10 +4,10 @@ player=4
 
 #handle
 [HANDLE]
-1=Everson Zoio
-2=Thom Yorke
-3=Neymar
-4=Albini
+1=Godspeed You! Black Empereor
+2=Erik
+3=Kevin de Bruyne
+4=Italia
 
 #ip
 [IP]

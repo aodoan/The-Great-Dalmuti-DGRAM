@@ -1,10 +1,9 @@
-
 from roteamento import *
 import socket
 import random
 import shutil
 import client
-
+import os
 
 def return_carta(num):
     contador = 0
@@ -16,12 +15,7 @@ def return_carta(num):
             if(contador == num):
                 return i
 
-def imprime_cartas(card_set):
-    for i in range(1, 14):
-        r = card_set.count(i)
-        #so imprime se houver carta
-        if(r > 0):
-            print(f"[{i:2}] -> {r}")
+
 
 #cria uma lista de 1 a 80
 def embaralha():
@@ -72,19 +66,30 @@ def recebe_baralho(mensagem):
     return baralho
 
 
-def atualiza_dados(msg, player_info):
+def atualiza_dados(jogada, player_info):
+    if(jogada == None):
+        return player_info
     #ve quem mandou
-    origem = msg[2][2] - 1
+    if(jogada[3] == 0):
+        origem = jogada[2] - 1
+        print(f'estou atualizando dados do {origem} com {jogada[0]}')
+        player_info[origem] = player_info[origem] - jogada[0]
+
     #por enquanto o modo de enviar jogada e uma lista com duas posicoes
-    #posicao 0 quantas cartas, posicao 1 qual valor da carta
-    player_info[origem] = player_info[origem] - msg[2][0]
+    #poer_info[origem] = player_info[origem] - msg[2][0]
     return player_info
 
 # passa a ultima jogada que foi feita
 # se passou retorna a mesma jogada
 # se for a primeira jogada da rodada, tem que passar uma lista zerada
 # funcao precaria, arrumar o quanto antes que vergonha
-def get_jogada(jogada, hand_set):
+def get_jogada(jogada, hand_set, venceu):
+    jester = 0
+    #se a pessoa ja venceu, so passa a vez
+    if(venceu == 1):
+        jogada[3] = 1 # indica que a jogada ja foi passada
+        return jogada
+
     print(f"ultima jogada {jogada[0]} cartas nivel {jogada[1]}")
     if(jogada[0] != 0):
         print(f"A ultima jogada foi: {jogada[0]} cartas de nivel {jogada[1]}")
@@ -94,33 +99,49 @@ def get_jogada(jogada, hand_set):
     while True:
         if(jogada[0] == 0): # se eh a primeira jogada da rodada, nem pergunta
             op = 'J'
+        elif(hand_set.count(13) > 0): #tem algum valete
+            op = input("J - Jogar, P - Passar, JE - Jogar com um coringa: ")
         else:
-            op = input("J - Jogar, P - Passar: ")
+            op = input("J - Jogar, P - Passar")
+
+        if(op == "JE" or op == "je"):
+            op = 'j'
+            jester = 1
 
         if(op == "j" or op == "J"):
             q, n = input("Digite sua jogada [qtd/nivel] ").split(" ", 2)
             qtd = int(q)
             nivel = int(n)
             print(f"{qtd} cartas do nivel {nivel}")
-
+            if(jester == 1):
+                hand_set.remove(13) # tira um coringa
+                hand_set.append(nivel) # adiciona mais uma carta na mao
             #so verifica se teve alguma jogada antes
 
 
             if(jogada[0] != qtd and jogada[0] != 0):
                 print("Voce precisa jogar o mesmo numero de cartas!")
+                if(jester == 1):
+                    hand_set.remove(nivel) # tira um coringa
+                    hand_set.append(13) # adiciona mais uma carta na mao
+                    jester = 0
             elif(nivel >= jogada[1] and jogada[0] != 0):
                 print("Voce precisa jogar cartas com nivel menor!")
+                if(jester == 1):
+                    hand_set.remove(nivel) # tira um coringa
+                    hand_set.append(13) # adiciona mais uma carta na mao
+                    jester = 0
             else:
                 #chega aqui somente se a jogada for valida, agora verifica se ele tem as cartas
                 #verifica se tem as cartas do nivel requerido
                 if(hand_set.count(nivel) >= qtd):
                     for i in range(0, qtd):
                         hand_set.remove(nivel)  # remove as cartas do baralho se
-                    print("jogada feita!")
+                    #print("jogada feita!")
                     jogada[0] = qtd             # atribui os valores para jogada e retorna
                     jogada[1] = nivel           #
                     jogada[2] = ordem           # define quem fez a jogada
-
+                    jogada[3] = 0
                     #se tiver, printa e vaza
                     return jogada
                 else:
@@ -128,6 +149,7 @@ def get_jogada(jogada, hand_set):
 
         elif(op == "P" or op == "p"):
             print("Voce passou a vez!")
+            jogada[3] = 1
             return jogada
 
 # mensagem que passa o bastao para frente
@@ -135,8 +157,32 @@ def cria_mensagem_bastao(msg):
     msg[4] = "bastao"
     return msg
 
+#imprime o handle de cada um,
+def imprime_tela(player_info, card_set):
+    #os.system('clear')
+    print_header()
 
+    #imprime os logins
+    for player in range(1, num+1):
+        if(player != player_info[num]):
+            print(f"{handle(player)}", end=' '*SPACE)
+        else:
+            print(BOLDS + handle(player) + BOLDE, end=' '*SPACE)
 
+    print()
+
+    #imprime a qtd de cartas
+    for score in range(0, num):
+        size = len(handle(score+1))
+        n = (size // 2) - 1
+        print(" " * n, end='')
+        print(player_info[score], end='')
+        print(" " * (n+SPACE), end='')
+
+    print()
+    print_separator()
+    imprime_cartas(card_set)
+    print_separator()
 
 '''
 lista = cria_mensagem_cartas()

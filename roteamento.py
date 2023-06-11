@@ -9,7 +9,11 @@ CONFIG_FILE = "config.txt" #arquivo de configuracao
 UDP_PORT = 8080            #porta padrao de comunicacao
 MARCADOR_INICIO = "INICIO"
 MARCADOR_FIM = "FIM"
-PRIMEIRO_A_JOGAR = 1
+PRIMEIRO_A_JOGAR = 1 # define quem eh o grande dalmuti na primeira rodada
+BOLDS = '\033[1m'
+BOLDE = '\033[0m'
+SPACE = 5
+
 f = open(CONFIG_FILE, "r")
 conteudo = f.read()
 config = configparser.RawConfigParser()
@@ -64,6 +68,10 @@ def player_handle(IP):
             ordem = key
     return config.get('HANDLE', str(ordem))
 
+#retorna o nick do jogador de acordo com a ordem
+def handle(ordem):
+    return config.get('HANDLE', str(ordem))
+
 
 def order(IP):
     for key, value in config.items('IP'):
@@ -71,4 +79,35 @@ def order(IP):
             ordem = key
     return int(ordem)
 
+#imprime um texto em bold sem new line
+def bold(text):
+    print(BOLDS + text + BOLDE, end=' ')
+
 ordem = order(socket.gethostbyname(hostname))
+
+def header_info():
+    contador = 0
+    for player in range(1, num+1):
+        contador = contador + len(handle(player))
+        contador = contador + SPACE
+    return contador
+
+how_many = header_info()
+GAMENAME = "The Great Dalmuti"
+spaces = (how_many - len(GAMENAME)) // 2
+
+def print_header():
+    print('-'*how_many)
+    print(" " * spaces + GAMENAME)
+    print('-'*how_many)
+
+spacesC = (how_many - 9) // 2
+def imprime_cartas(card_set):
+    for i in range(1, 14):
+        r = card_set.count(i)
+        #so imprime se houver carta
+        if(r > 0):
+            print(" "*spaces + f"[{i:2}] -> {r}")
+
+def print_separator():
+    print('-'*how_many)
