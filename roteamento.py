@@ -109,5 +109,15 @@ def imprime_cartas(card_set):
         if(r > 0):
             print(" "*spaces + f"[{i:2}] -> {r}")
 
+def imprime_final():
+    print(" "*spaces + "voce terminou seu baralho!")
+
+def imprime_jogada(player_info, jogada):
+    if(jogada[0] != 0): #tem alguma jogada pra imprimir
+        print(f"A ultima jogada feita foi {jogada[0]} cartas do nivel {jogada[1]}")
+    else:
+        player = handle(player_info[num])
+        print(f"{player} vai comecar a rodada.")
+
 def print_separator():
     print('-'*how_many)

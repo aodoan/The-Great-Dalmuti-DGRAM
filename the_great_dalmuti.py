@@ -2,6 +2,7 @@ from roteamento import *
 from receive import *
 from teste import *
 from client import *
+import time
 """
     TODO: colocar as mensagens indicando a rodada talvez
           fazer um menu bonitinho pra mostra tudo etc
@@ -48,19 +49,20 @@ def main():
         BASTAO = 0
     venceu = 0
     while (fim_de_jogo != 1):
-        #por algum motivo obscuro, usar clear fode todo o jogo
-        imprime_tela(player_info, hand)
+        flush_terminal()
+        print(hand)
+        imprime_tela(player_info, hand, jogada)
         #imprime_dados()
         #verifica se a maquina atual tem o bastao
         if(BASTAO == 1):
             jogada_antiga = jogada.copy()
             jogada = get_jogada(jogada, hand, venceu)
             msg = cria_mensagem(jogada)
-            print(jogada_antiga)
-            print(jogada)
             if(jogada_antiga[1] != jogada[1]): # se a jogada mudo
                 print("a jogada mudou")
                 player_info[ordem-1] = player_info[ordem-1] - jogada[0]
+            if(len(hand) == 0):
+                venceu = 1 # altera o estado do jogador para venceu
             send(msg) # envia a jogada pra todo mundo
             msgR = recebe_mensagem()
             msg = cria_mensagem_bastao(msgR) # envia o bastao para frente
@@ -71,19 +73,17 @@ def main():
             #espera algo, e quando receber manda pra frente, consumindo as paradas
             msg = recebe_mensagem()
             print(msg)
+            player_info[num] = ((player_info[num] % (num))) + 1
             jogada = msg[2]
             if("bastao" in msg):
-                print("recebi o bastao")
                 #player_info.append(ordem) # quem ta com o bastao
                 player_info[num] = ordem
                 BASTAO = 1      # ele ta com o bastao, pode fazer a jogada
                 if(jogada[2] == ordem): # significa que todo mundo passou, ele ganha a rodada
-                    jogada = [0] * 3    # marca como zero a jogada
+                    jogada = [0] * 4    # marca como zero a jogada
             else:
                 player_info = atualiza_dados(jogada, player_info) #atualiza os dados
-                player_info[num] += 1 % (num+1)
                 # se ele n for receber o bastao
-                print("passei por aqui")
                 #atualiza_dados(msg, player_info) #atualiza os dados
                 msg[3][ordem-1] = 1 # confirma que recebeu
                 send(msg) #envia a mensagem para proximo da rede
@@ -92,3 +92,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

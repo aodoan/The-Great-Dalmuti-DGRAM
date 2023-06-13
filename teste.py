@@ -38,7 +38,7 @@ def cria_mensagem(jogada):
     confirmacao[ordem-1] = 1
     mensagem.append(confirmacao)
 
-    #lugar para deixar caso precise de troca de bastao
+    #lugar para deixar caso para trocar de bastao
     mensagem.append(0)
     mensagem.append(MARCADOR_FIM)
     return mensagem
@@ -90,20 +90,15 @@ def get_jogada(jogada, hand_set, venceu):
         jogada[3] = 1 # indica que a jogada ja foi passada
         return jogada
 
-    print(f"ultima jogada {jogada[0]} cartas nivel {jogada[1]}")
-    if(jogada[0] != 0):
-        print(f"A ultima jogada foi: {jogada[0]} cartas de nivel {jogada[1]}")
-    else:
-        print("Faca a sua jogada: ")
-
     while True:
         if(jogada[0] == 0): # se eh a primeira jogada da rodada, nem pergunta
             op = 'J'
         elif(hand_set.count(13) > 0): #tem algum valete
             op = input("J - Jogar, P - Passar, JE - Jogar com um coringa: ")
         else:
-            op = input("J - Jogar, P - Passar")
-
+            op = input("J - Jogar, P - Passar: ")
+        op = op.replace(" ", "")
+        op = op.upper()
         if(op == "JE" or op == "je"):
             op = 'j'
             jester = 1
@@ -158,10 +153,11 @@ def cria_mensagem_bastao(msg):
     return msg
 
 #imprime o handle de cada um,
-def imprime_tela(player_info, card_set):
+def imprime_tela(player_info, card_set, jogada):
     #os.system('clear')
     print_header()
-
+    imprime_jogada(player_info, jogada)
+    print_separator()
     #imprime os logins
     for player in range(1, num+1):
         if(player != player_info[num]):
@@ -171,20 +167,24 @@ def imprime_tela(player_info, card_set):
 
     print()
 
-    #imprime a qtd de cartas
-    for score in range(0, num):
-        size = len(handle(score+1))
-        n = (size // 2) - 1
-        print(" " * n, end='')
-        print(player_info[score], end='')
-        print(" " * (n+SPACE), end='')
-
-    print()
+    if(len(card_set) == 0):
+        imprime_final()
+    else:
+        #imprime a qtd de cartas
+        for score in range(0, num):
+            size = len(handle(score+1))
+            n = (size // 2) - 1
+            print(" " * n, end='')
+            print(player_info[score], end='')
+            print(" " * (n+SPACE), end='')
+        print()
     print_separator()
     imprime_cartas(card_set)
     print_separator()
 
-'''
+def flush_terminal():
+    print("\n" * 100)
+    '''
 lista = cria_mensagem_cartas()
 print(lista)
 hand = recebe_baralho(lista)
