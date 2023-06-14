@@ -1,0 +1,18 @@
+#numero de jogadores
+[NUM]
+player=4
+
+#handle
+[HANDLE]
+1=Godspeed You! Black Empereor
+2=Erik
+3=Kevin de Bruyne
+4=Italia
+
+#ip
+[IP]
+1=192.168.100.164
+2=10.254.223.38
+3=10.254.223.50
+4=10.254.223.41
+ 

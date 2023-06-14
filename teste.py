@@ -26,7 +26,7 @@ def embaralha():
     return cartas
 
 # marcador de inicio | origem | quem fez a ultima jogada | dados (jogada) e numero de passadas | FIM
-def cria_mensagem(jogada):
+def cria_mensagem(jogada, winner_list):
     mensagem = []
     mensagem.append(MARCADOR_INICIO)
     mensagem.append(ordem)
@@ -40,6 +40,7 @@ def cria_mensagem(jogada):
 
     #lugar para deixar caso para trocar de bastao
     mensagem.append(0)
+    mensagem.append(winner_list)
     mensagem.append(MARCADOR_FIM)
     return mensagem
 
@@ -104,7 +105,11 @@ def get_jogada(jogada, hand_set, venceu):
             jester = 1
 
         if(op == "j" or op == "J"):
-            q, n = input("Digite sua jogada [qtd/nivel] ").split(" ", 2)
+            while True:
+                try:
+                    q, n = input("Digite sua jogada [qtd/nivel] ").split(" ", 2)
+                except:
+                    pass
             qtd = int(q)
             nivel = int(n)
             print(f"{qtd} cartas do nivel {nivel}")

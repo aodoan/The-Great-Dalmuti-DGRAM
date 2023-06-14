@@ -4,15 +4,15 @@ player=4
 
 #handle
 [HANDLE]
-1=Godspeed You! Black Empereor
-2=Erik
-3=Kevin de Bruyne
-4=Italia
+1=Thom Yorke
+2=Dave Growl
+3=Neil Gallagher
+4=Little Finger
 
 #ip
 [IP]
-1=192.168.100.164
-2=10.254.223.38
-3=10.254.223.50
-4=10.254.223.41
- 
+1=10.254.224.52
+2=10.254.224.53
+3=10.254.224.54
+4=10.254.224.55
+
