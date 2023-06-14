@@ -32,8 +32,8 @@ def main():
     #se cair nesse else, precisa esperar carta
     else:
         msg = recebe_mensagem()
-        hand = recebe_baralho(msg) 
-        msg[2] = msg[2][len(hand):] # exclui tudo o que ele pegou da lista
+        hand = recebe_baralho(msg)
+        #msg[2] = msg[2][5:] # exclui tudo o que ele pegou da lista
         msg[3][ordem-1] = 1 # marca que recebeu
         send(msg)
 
@@ -41,7 +41,7 @@ def main():
     fim_de_jogo = 0
     player_info = [len(hand)] * num # lista que guarda quantas cartas cada jogador tem no momento
     player_info.append(PRIMEIRO_A_JOGAR) # quem ta com o bastao
-    
+
     #se ele for o primeiro a jogar, fica com o bastao
     if(ordem == PRIMEIRO_A_JOGAR):
         BASTAO = 1
@@ -62,15 +62,17 @@ def main():
             jogada = get_jogada(jogada, hand, venceu)
             msg = cria_mensagem(jogada, winner_list)
             #verifica se a jogada mudou ou se foi passada
-            if(jogada_antiga[1] != jogada[1]): 
+            if(jogada_antiga[1] != jogada[1]):
                 player_info[ordem-1] = player_info[ordem-1] - jogada[0]
-            
+
             #se zerou as cartas, termina a jogada
             if(len(hand) == 0):
                 venceu = 1 # altera o estado do jogador para venceu
                 if not(ordem in winner_list):
                     winner_list.append(ordem)
-            
+                if(len(winner_list) >= num-1):
+                    fim_de_jogo = 1
+
             send(msg) # envia a jogada pra todo mundo
             msgR = recebe_mensagem()
             msg = cria_mensagem_bastao(msgR) # envia o bastao para frente

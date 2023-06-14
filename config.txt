@@ -4,15 +4,15 @@ player=4
 
 #handle
 [HANDLE]
-1=Thom Yorke
-2=Dave Growl
-3=Neil Gallagher
-4=Little Finger
+1=Lionel Messi
+2=Ninguem
+3=Taylor Alison
+4=Filme Pirata
 
 #ip
 [IP]
-1=10.254.224.52
-2=10.254.224.53
-3=10.254.224.54
-4=10.254.224.55
+1=10.254.223.58
+2=10.254.223.78
+3=10.254.223.85
+4=10.254.223.86
 

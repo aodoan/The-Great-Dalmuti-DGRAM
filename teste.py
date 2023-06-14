@@ -109,7 +109,10 @@ def get_jogada(jogada, hand_set, venceu):
                 try:
                     q, n = input("Digite sua jogada [qtd/nivel] ").split(" ", 2)
                 except:
-                    pass
+                    print("Digite os dados corretamente")
+                    continue
+                if(int(q) and int(n)):
+                    break;
             qtd = int(q)
             nivel = int(n)
             print(f"{qtd} cartas do nivel {nivel}")
