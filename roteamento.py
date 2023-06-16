@@ -1,9 +1,10 @@
 import configparser
 import socket
+import math
 #definicoes
 
 hostname = socket.gethostname()
-CARTEADOR = 1
+CARTEADOR = 1 
 
 CONFIG_FILE = "config.txt" #arquivo de configuracao
 UDP_PORT = 8080            #porta padrao de comunicacao
@@ -20,13 +21,13 @@ config = configparser.RawConfigParser()
 config.read(r'config.txt')
 
 
-
 def num_players():
     num = int(config.get('NUM', 'player'))
     return num
 
 num = num_players()
-
+num_cards = math.ceil(80/num)
+total = num_cards * num
 def players():
     num = num_players()
     #inicia lista de jogadores
@@ -112,12 +113,27 @@ def imprime_cartas(card_set):
 def imprime_final():
     print(" "*spaces + "voce terminou seu baralho!")
 
+def imprime_meio(rodada):
+    string = "Rodada " + str(rodada)
+    num = (how_many - len(string)) // 2
+    print(" " * num + string)
+
+def print_middle(text):
+    string = str(text)
+    num = (how_many - len(string)) // 2
+    print(" " * num + string)
+
+
 def imprime_jogada(player_info, jogada):
     if(jogada[0] != 0): #tem alguma jogada pra imprimir
-        print(f"A ultima jogada feita foi {jogada[0]} cartas do nivel {jogada[1]}")
+        string = "A ultima jogada feita foi " + str(jogada[0]) +" cartas do nivel " + str(jogada[1])
+        print_middle(string)
     else:
         player = handle(player_info[num])
-        print(f"{player} vai comecar a rodada.")
+        #print(f"{player} vai comecar a rodada.")
+        string = str(player) + " vai comecar a rodada"
+        print_middle(string)
 
 def print_separator():
     print('-'*how_many)
+

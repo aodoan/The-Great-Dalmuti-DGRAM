@@ -5,6 +5,7 @@ import shutil
 import client
 import os
 
+#le um numero de 1 a 80 e atribui seu valor
 def return_carta(num):
     contador = 0
     if(num == 79 or num == 80):
@@ -17,7 +18,7 @@ def return_carta(num):
 
 
 
-#cria uma lista de 1 a 80
+#cria uma lista de 1 a 80 e embaralha
 def embaralha():
     cartas = []
     for i in range(1, 81):
@@ -25,7 +26,17 @@ def embaralha():
     random.shuffle(cartas)
     return cartas
 
-# marcador de inicio | origem | quem fez a ultima jogada | dados (jogada) e numero de passadas | FIM
+
+#cria uma mensagem em forma de lista
+
+#FORMATACAO DAS MENSAGENS
+#marcador de inicio
+#origem da mensagem
+#jogada
+#campo de confirmacao
+#campo para trocar o bastao
+#lista de vencedores
+#marcador de fim
 def cria_mensagem(jogada, winner_list):
     mensagem = []
     mensagem.append(MARCADOR_INICIO)
@@ -44,8 +55,13 @@ def cria_mensagem(jogada, winner_list):
     mensagem.append(MARCADOR_FIM)
     return mensagem
 
-
-# marcador inicio | origem | dados | FIM
+#cria uma mensagem de entregar cartas
+#FORMATACAO
+#marcador de inicio
+#origem da mensagem
+#lista de cartas
+#campo de confirmacao
+#marcador de fim
 def cria_mensagem_cartas():
     mensagem = []
     mensagem.append(MARCADOR_INICIO) #inicio
@@ -60,13 +76,13 @@ def cria_mensagem_cartas():
     mensagem.append(MARCADOR_FIM)
     return mensagem
 
-#recebe uma mensagem inteira e retorna somente as suas cartas
+#recebe uma mensagem e retorna somente as cartas do seu baralho
 def recebe_baralho(mensagem):
-    baralho = mensagem[2][:20]
+    baralho = mensagem[2][:num_cards]
     baralho.sort()
     return baralho
 
-
+#recebe uma jogada e atualiza na estrutura player_info de cada maquina
 def atualiza_dados(jogada, player_info):
     if(jogada == None):
         return player_info
@@ -80,11 +96,12 @@ def atualiza_dados(jogada, player_info):
     #poer_info[origem] = player_info[origem] - msg[2][0]
     return player_info
 
-# passa a ultima jogada que foi feita
-# se passou retorna a mesma jogada
-# se for a primeira jogada da rodada, tem que passar uma lista zerada
-# funcao precaria, arrumar o quanto antes que vergonha
+
+#quando a maquina tem o bastao, eh solicitado sua jogada
+#retorna a jogada do usuario (passou ou fez uma jogada em cima)
+#se o usuario ja ganhou, so passa
 def get_jogada(jogada, hand_set, venceu):
+    jester_qtd = hand_set.count(13)
     jester = 0
     #se a pessoa ja venceu, so passa a vez
     if(venceu == 1):
@@ -93,14 +110,20 @@ def get_jogada(jogada, hand_set, venceu):
 
     while True:
         if(jogada[0] == 0): # se eh a primeira jogada da rodada, nem pergunta
-            op = 'J'
-        elif(hand_set.count(13) > 0): #tem algum valete
+            if(jester_qtd == 0):
+                op = 'J'
+            else:
+                op = input("J - Jogar, JE - Jogar com um coringa: ")
+                op = op.upper()
+                if(op != 'J' and op != 'JE'):
+                    op = 'lixo'
+        elif(jester > 0): #tem algum valete
             op = input("J - Jogar, P - Passar, JE - Jogar com um coringa: ")
         else:
             op = input("J - Jogar, P - Passar: ")
         op = op.replace(" ", "")
         op = op.upper()
-        if(op == "JE" or op == "je"):
+        if(op == "JE"):
             op = 'j'
             jester = 1
 
@@ -115,7 +138,6 @@ def get_jogada(jogada, hand_set, venceu):
                     break;
             qtd = int(q)
             nivel = int(n)
-            print(f"{qtd} cartas do nivel {nivel}")
             if(jester == 1):
                 hand_set.remove(13) # tira um coringa
                 hand_set.append(nivel) # adiciona mais uma carta na mao
@@ -154,16 +176,25 @@ def get_jogada(jogada, hand_set, venceu):
             print("Voce passou a vez!")
             jogada[3] = 1
             return jogada
+        else:
+            print("Jogada invalida!")
 
 # mensagem que passa o bastao para frente
 def cria_mensagem_bastao(msg):
     msg[4] = "bastao"
     return msg
 
-#imprime o handle de cada um,
-def imprime_tela(player_info, card_set, jogada):
+def cria_mensagem_passagem(msg):
+    msg[4] = "passando"
+    return msg
+
+
+#imprime as informacoes de player info, e a mao de cada jogador
+def imprime_tela(player_info, card_set, jogada, rodada):
     #os.system('clear')
     print_header()
+    #print(" " * spaces + f"Rodada {rodada}")
+    imprime_meio(rodada)
     imprime_jogada(player_info, jogada)
     print_separator()
     #imprime os logins
@@ -175,9 +206,7 @@ def imprime_tela(player_info, card_set, jogada):
 
     print()
 
-    if(len(card_set) == 0):
-        imprime_final()
-    else:
+    if(True):
         #imprime a qtd de cartas
         for score in range(0, num):
             size = len(handle(score+1))
@@ -187,23 +216,31 @@ def imprime_tela(player_info, card_set, jogada):
             print(" " * (n+SPACE), end='')
         print()
     print_separator()
-    imprime_cartas(card_set)
+    if(len(card_set) == 0):
+        #imprime_final()
+        print_middle("Voce terminou seu baralho!")
+    else:
+        imprime_cartas(card_set)
     print_separator()
 
+#imprime \n para "limpar" o terminal
 def flush_terminal():
     print("\n" * 100)
-    '''
-lista = cria_mensagem_cartas()
-print(lista)
-hand = recebe_baralho(lista)
-print(hand)
-print(lista)
 
-lista = cartas[:20]
-lista.sort()
-a = 0
-for card in lista:
-    lista[a] = return_carta(card)
-    a += 1
-imprime_cartas(lista)
-'''
+#incrementa a ordem (mantem em controle quem ta com o bastao)
+def add_ordem(ordem):
+    ordem = ordem + 1
+    if(ordem > num):
+        ordem = 1
+    return ordem
+
+def imprime_fim(winner_list):
+    for i in range(0, len(winner_list)):
+        nickname = handle(winner_list[i][0])
+        print(f"{i+1}° posicao -> {nickname} terminou suas cartas na rodada {winner_list[i][1]}")
+
+def print_m(text):
+    string = str(text)
+    num = (how_many - len(string)) // 2
+    print(" " * num + string)
+
