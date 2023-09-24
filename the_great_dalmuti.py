@@ -1,7 +1,4 @@
-from roteamento import *
-from receive import *
-from teste import *
-from client import *
+from src.setup import *
 
 def main():
     hand = []
@@ -82,15 +79,12 @@ def main():
         else:
             #espera algo, e quando receber manda pra frente, consumindo as paradas
             msg = recebe_mensagem()
-            #player_info[num] = add_ordem(player_info[num])
             jogada = msg[2]
             winner_list = msg[5]
-            #player_info = atualiza_dados(msg, player_info)
             if(len(winner_list) == num-1):
                 fim_de_jogo = 1
                 #o jogo acabou
             if("bastao" in msg):
-                #player_info.append(ordem) # quem ta com o bastao
                 player_info = atualiza_dados(jogada, player_info)
                 player_info[num] = ordem
                 #envia a mensagem para todo mundo 
@@ -103,7 +97,6 @@ def main():
                 msgR = recebe_mensagem()
                 BASTAO = 1
             else:
-                #player_info = atualiza_dados(jogada, player_info) #atualiza os dados
                 if("passando" in msg):
                     player_info = atualiza_dados(jogada, player_info)
                     player_info[num] = msg[1]
@@ -111,9 +104,12 @@ def main():
                         player_info[ordem-1] = player_info[ordem-1] - jogada[0]
                         rodada += 1
                         player_info[num] = msg[1]
+                #player_info = atualiza_dados(msg, player_info)
                 # se ele n for receber o bastao
                 msg[3][ordem-1] = 1 # confirma que recebeu
                 send(msg) #envia a mensagem para proximo da rede
+
+    #finaliza a execucao e imprime a ordem dos vencedores
     imprime_fim(winner_list)
 
 

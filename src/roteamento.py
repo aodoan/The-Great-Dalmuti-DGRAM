@@ -1,20 +1,18 @@
 import configparser
 import socket
 import math
-#definicoes
 
 hostname = socket.gethostname()
-CARTEADOR = 1 
 
-CONFIG_FILE = "config.txt" #arquivo de configuracao
-UDP_PORT = 8080            #porta padrao de comunicacao
 MARCADOR_INICIO = "INICIO"
 MARCADOR_FIM = "FIM"
-PRIMEIRO_A_JOGAR = 1 # define quem eh o grande dalmuti na primeira rodada
+
 BOLDS = '\033[1m'
 BOLDE = '\033[0m'
 SPACE = 5
 
+#abre o arquivo de configuracao
+CONFIG_FILE = "./config.txt" #arquivo de configuracao
 f = open(CONFIG_FILE, "r")
 conteudo = f.read()
 config = configparser.RawConfigParser()
@@ -22,12 +20,13 @@ config.read(r'config.txt')
 
 
 def num_players():
-    num = int(config.get('NUM', 'player'))
+    num = int(config.get('GAME_INFO', 'player'))
     return num
 
 num = num_players()
 num_cards = math.ceil(80/num)
 total = num_cards * num
+
 def players():
     num = num_players()
     #inicia lista de jogadores
@@ -48,6 +47,11 @@ def ip():
     return ip_a
 
 ip_list = ip()
+
+
+PRIMEIRO_A_JOGAR = int(config.get('GAME_INFO', "first_to_play"))
+CARTEADOR = int(config.get('GAME_INFO', "player_deal"))
+UDP_PORT = int(config.get('GAME_INFO', "UDP_PORT"))
 
 def rota():
     IP = ip()

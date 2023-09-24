@@ -1,18 +1,22 @@
-#numero de jogadores
-[NUM]
+#informacoes sobre o jogo
+[GAME_INFO]
 player=4
+UDP_PORT=8080
+first_to_play=1
+player_deal=1
 
-#handle
+
+#o apelido de cada um
 [HANDLE]
-1=Lionel Messi
-2=Ninguem
-3=Taylor Alison
-4=Filme Pirata
+1=Fulano 
+2=Sicrano
+3=Beltrano
+4=Jogador 4
 
-#ip
+#o endereco de cada jogador
 [IP]
-1=192.168.100.164
-2=10.254.223.78
-3=10.254.223.85
-4=10.254.223.86
+1=10.254.223.29
+2=10.254.223.30
+3=10.254.223.38
+4=10.254.223.58
 
